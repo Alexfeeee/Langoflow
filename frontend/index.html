@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>English Corpus</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/typing.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#18181b',
+                        secondary: '#71717a',
+                        accent: '#3b82f6',
+                        surface: '#fafafa',
+                        border: '#e4e4e7'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            overscroll-behavior: none; 
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-white">
+    
+    <!-- Auth -->
+    <div id="auth-container" class="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex items-center p-4">
+        <div class="w-full max-w-sm mx-auto">
+            <div id="login-form" class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-book-2-line text-3xl text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-primary">English Corpus</h1>
+                    <p class="text-sm text-secondary mt-2">AI英语学习助手</p>
+                </div>
+                <div class="space-y-4">
+                    <input type="text" id="login-username" placeholder="用户名" 
+                        class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none transition">
+                    <input type="password" id="login-password" placeholder="密码" 
+                        class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none transition">
+                    <button onclick="auth.login()" 
+                        class="w-full bg-primary text-white py-3 rounded-xl font-medium active:scale-95 transition">
+                        登录
+                    </button>
+                </div>
+                <p class="text-center text-sm text-secondary mt-6">
+                    没有账号？<button onclick="auth.toggleView()" class="text-accent font-medium">注册</button>
+                </p>
+            </div>
+
+            <div id="register-form" class="bg-white rounded-2xl shadow-lg p-8 hidden">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-user-add-line text-3xl text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-primary">创建账号</h1>
+                </div>
+                <div class="space-y-4">
+                    <input type="text" id="reg-username" placeholder="用户名" 
+                        class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none transition">
+                    <input type="password" id="reg-password" placeholder="密码 (至少6位)" 
+                        class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none transition">
+                    <button onclick="auth.register()" 
+                        class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl font-medium active:scale-95 transition">
+                        注册
+                    </button>
+                </div>
+                <p class="text-center text-sm text-secondary mt-6">
+                    已有账号？<button onclick="auth.toggleView()" class="text-accent font-medium">登录</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- App -->
+    <div id="app-container" class="hidden min-h-screen flex flex-col bg-white">
+        <header class="sticky top-0 z-40 bg-white/95 border-b border-border backdrop-blur">
+            <div class="px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i class="ri-book-2-line text-white text-sm"></i>
+                    </div>
+                    <h1 class="text-lg font-bold">Corpus</h1>
+                </div>
+                <button onclick="auth.logout()" class="text-secondary hover:text-primary transition">
+                    <i class="ri-logout-box-line text-xl"></i>
+                </button>
+            </div>
+        </header>
+
+        <main id="main-content" class="flex-1 overflow-y-auto no-scrollbar pb-20"></main>
+
+        <nav class="fixed bottom-0 left-0 right-0 bg-white/95 border-t border-border backdrop-blur z-50">
+            <div class="flex justify-around px-2 py-2" style="padding-bottom:max(0.5rem, env(safe-area-inset-bottom))">
+                <button class="nav-btn flex-1 flex flex-col items-center py-2 rounded-lg text-secondary transition" 
+                    data-target="upload" onclick="router.load('upload')">
+                    <i class="ri-upload-cloud-line text-2xl"></i>
+                    <span class="text-xs mt-1">上传</span>
+                </button>
+                <button class="nav-btn flex-1 flex flex-col items-center py-2 rounded-lg text-secondary transition" 
+                    data-target="corpus" onclick="router.load('corpus')">
+                    <i class="ri-book-2-line text-2xl"></i>
+                    <span class="text-xs mt-1">语料</span>
+                </button>
+                <button class="nav-btn flex-1 flex flex-col items-center py-2 rounded-lg text-secondary transition" 
+                    data-target="opinion" onclick="router.load('opinion')">
+                    <i class="ri-lightbulb-line text-2xl"></i>
+                    <span class="text-xs mt-1">观点</span>
+                </button>
+                <button class="nav-btn flex-1 flex flex-col items-center py-2 rounded-lg text-secondary transition" 
+                    data-target="stats" onclick="router.load('stats')">
+                    <i class="ri-bar-chart-box-line text-2xl"></i>
+                    <span class="text-xs mt-1">统计</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', () => auth.init());</script>
+</body>
+</html>
